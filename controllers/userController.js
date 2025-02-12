@@ -97,7 +97,7 @@
         if (!user) return res.status(400).json({ message: "User not found for login please register first" });
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user._id }, "a6c3157c166681b32be2f0d6b97c734471f6a1bb69f322e7e71d36bb363863fe", { expiresIn: "1h" });
         res.json({ message: "Login successful!", token });
     } catch (error) {
         console.error("Login error:", error);
