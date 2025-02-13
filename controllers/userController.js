@@ -17,12 +17,12 @@
     
 
     // Generate OTP
-    function generateOTP() {
-    return Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
-    }
+    // function generateOTP() {
+    // return Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
+    // }
 
     // Register a new user and send OTP
-
+    
     exports.register = async (req, res) => {
     try {
         const { username, email, phoneNumber, password } = req.body;
@@ -31,7 +31,7 @@
         if (user) return res.status(400).json({ message: "User already exists" });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const otp = generateOTP();
+        // const otp = generateOTP();
 
         // var mailotp = Math.floor(100000 + Math.random()*900000)
 
@@ -42,7 +42,9 @@
         email,
         phoneNumber,
         password: hashedPassword,
-        sendOtp: otp,
+        // sendOtp: otp,
+        // mailOtp: mailotp.toString(),
+        // otpExpiration
         });
 
         await user.save();
@@ -52,11 +54,11 @@
         // mailer.sendMail(email,'Mail verification',msg);
 
         // Send OTP via Twilio
-        await twilioClient.messages.create({
-        body: `Your OTP code is: ${sendOtp}`,
-        to: phoneNumber,
-        from: process.env.TWILIO_PHONE_NUMBER,
-        });
+        // await twilioClient.messages.create({
+        // body: `Your OTP code is: ${mailotp}`,
+        // to: phoneNumber,
+        // from: process.env.TWILIO_PHONE_NUMBER,
+        // });
 
         res.status(201).json({ message: "User registered successfully. OTP sent!" });
     } catch (error) {
