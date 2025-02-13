@@ -1,14 +1,14 @@
     const User = require("../models/User");
-    const mailer = require('../helpers/mailer')
+    // const mailer = require('../helpers/mailer')
     const bcrypt = require("bcryptjs");
     const jwt = require("jsonwebtoken");
 
-    const twilio = require('twilio'); 
+    // const twilio = require('twilio'); 
 
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    // const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    // const authToken = process.env.TWILIO_AUTH_TOKEN;
 
-    const twilioClient = new twilio(accountSid, authToken);
+    // const twilioClient = new twilio(accountSid, authToken);
 
     // const generateExpiryTime=()=>{
     //     const currentTime = new Date()
