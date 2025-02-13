@@ -56,7 +56,7 @@
         await twilioClient.messages.create({
         body: `Your OTP code is: ${mailotp}`,
         to: phoneNumber,
-        from: process.env.TWILIO_PHONE,
+        from: process.env.TWILIO_PHONE_NUMBER,
         });
 
         res.status(201).json({ message: "User registered successfully. OTP sent!" });
