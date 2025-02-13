@@ -10,10 +10,10 @@
 
     const twilioClient = new twilio(accountSid, authToken);
 
-    const generateExpiryTime=()=>{
-        const currentTime = new Date()
-        return new Date(currentTime.getTime() + 15 * 1000)
-    } 
+    // const generateExpiryTime=()=>{
+    //     const currentTime = new Date()
+    //     return new Date(currentTime.getTime() + 15 * 1000)
+    // } 
     
 
     // Generate OTP
@@ -33,9 +33,9 @@
         const hashedPassword = await bcrypt.hash(password, 10);
         const otp = generateOTP();
 
-        var mailotp = Math.floor(100000 + Math.random()*900000)
+        // var mailotp = Math.floor(100000 + Math.random()*900000)
 
-        const otpExpiration = generateExpiryTime();
+        // const otpExpiration = generateExpiryTime();
 
         user = new User({
         username,
@@ -43,19 +43,17 @@
         phoneNumber,
         password: hashedPassword,
         sendOtp: otp,
-        mailOtp: mailotp.toString(),
-        otpExpiration
         });
 
         await user.save();
 
-        const msg = `your otp is ${otp}`;
+        // const msg = `your otp is ${otp}`;
         
-        mailer.sendMail(email,'Mail verification',msg);
+        // mailer.sendMail(email,'Mail verification',msg);
 
         // Send OTP via Twilio
         await twilioClient.messages.create({
-        body: `Your OTP code is: ${mailotp}`,
+        body: `Your OTP code is: ${sendOtp}`,
         to: phoneNumber,
         from: process.env.TWILIO_PHONE_NUMBER,
         });
