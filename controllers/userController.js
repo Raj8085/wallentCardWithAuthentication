@@ -22,6 +22,7 @@
     }
 
     // Register a new user and send OTP
+
     exports.register = async (req, res) => {
     try {
         const { username, email, phoneNumber, password } = req.body;
