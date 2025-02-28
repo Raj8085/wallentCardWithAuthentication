@@ -150,7 +150,7 @@ exports.uploadPaymentConfirmation = (req, res) => {
           <p><strong>From:</strong> ${email}</p>
           <p><strong>Card ID:</strong> ${cardId || 'N/A'}</p>
           <p><strong>Plan:</strong> ${planTitle || 'N/A'}</p>
-          <p><strong>Amount:</strong> ₹${planPrice ? parseInt(planPrice) * 1.18 : 'N/A'}</p>
+          <p><strong>Amount:</strong> ₹${planPrice ? parseInt(planPrice)  : 'N/A'}</p>
           <p><strong>Message:</strong> ${message || 'No message provided'}</p>
           <p>Please find the payment screenshot attached.</p>
         `,
@@ -238,7 +238,7 @@ exports.getAllPayments = async (req, res) => {
 
         // If you have a Payment model:
         // const payments = await Payment.find().sort({ createdAt: -1 });
-        
+
         // For now, we'll return a mock response
 
         const payments = [
