@@ -143,14 +143,14 @@ exports.uploadPaymentConfirmation = (req, res) => {
             // Send email to admin
             const adminMailOptions = {
                 from: process.env.SMTP_MAIL,
-                to: 'patelrajeev10342@gmail.com',
+                to: email,
                 subject: `Payment Confirmation - Card #${cardId || 'N/A'} - ${planTitle || 'N/A'}`,
                 html: `
           <h2>New Payment Confirmation</h2>
           <p><strong>From:</strong> ${email}</p>
           <p><strong>Card ID:</strong> ${cardId || 'N/A'}</p>
           <p><strong>Plan:</strong> ${planTitle || 'N/A'}</p>
-          <p><strong>Amount:</strong> ₹${planPrice ? parseInt(planPrice)  : 'N/A'}</p>
+          <p><strong>Amount:</strong> ₹${planPrice ? (planPrice)  : 'N/A'}</p>
           <p><strong>Message:</strong> ${message || 'No message provided'}</p>
           <p>Please find the payment screenshot attached.</p>
         `,
@@ -174,7 +174,7 @@ exports.uploadPaymentConfirmation = (req, res) => {
           <p>We have received your payment confirmation for the following:</p>
           <ul>
             <li><strong>Plan:</strong> ${planTitle || 'N/A'}</li>
-            <li><strong>Amount:</strong> ₹${planPrice ? parseInt(planPrice) * 1.18 : 'N/A'}</li>
+            <li><strong>Amount:</strong> ₹${planPrice ? (planPrice)  : 'N/A'}</li>
           </ul>
           <p>Our team will review your payment and activate your subscription shortly.</p>
           <p>If you have any questions, please reply to this email.</p>
