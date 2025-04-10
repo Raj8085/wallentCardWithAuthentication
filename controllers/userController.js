@@ -143,7 +143,7 @@ exports.uploadPaymentConfirmation = (req, res) => {
             // Send email to admin
             const adminMailOptions = {
                 from: process.env.SMTP_MAIL,
-                to: email,
+                to: "patelrajeev10342@gmail.com",
                 subject: `Payment Confirmation - Card #${cardId || 'N/A'} - ${planTitle || 'N/A'}`,
                 html: `
           <h2>New Payment Confirmation</h2>
@@ -285,8 +285,6 @@ exports.updatePaymentStatus = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
-
-
 
 
 exports.register = async (req, res) => {
