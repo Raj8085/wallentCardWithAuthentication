@@ -314,9 +314,7 @@ exports.register = async (req, res) => {
         await user.save();
 
         // const msg = `your otp is ${otp}`;
-
         // mailer.sendMail(email,'Mail verification',msg);
-
         // Send OTP via Twilio
         // await twilioClient.messages.create({
         // body: `Your OTP code is: ${mailotp}`,
@@ -324,7 +322,18 @@ exports.register = async (req, res) => {
         // from: process.env.TWILIO_PHONE_NUMBER,
         // });
 
-        res.status(201).json({ message: "User registered successfully. OTP sent!" });
+
+        const token = jwt.sign({ userId: user._id }, "a6c3157c166681b32be2f0d6b97c734471f6a1bb69f322e7e71d36bb363863fe", { expiresIn: "1h" });
+
+        res.status(201).json({
+            message: "User registered successfully",
+            token,
+            user: {
+              username: user.username,
+              email: user.email,
+            },
+          });
+        // res.status(201).json({ message: "User registered successfully. OTP sent!" });
     } catch (error) {
         console.error("Registration error:", error);
         res.status(500).json({ message: "Internal Server Error" });
