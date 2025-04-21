@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const PORT = process.env.PORT || 3000;
 
-const authRoute = require("./routes/authRoutes")
+const authRoute = require("./routes/authRoutes");
 
 const app = express();
 
@@ -21,6 +21,9 @@ mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDB connected successfully"))
   .catch((err) => console.error("MongoDB connection error:", err));
+
+
+  console.log("MONGO_URL:", process.env.MONGO_URL);
 
 app.use("/auth",authRoute);   
 

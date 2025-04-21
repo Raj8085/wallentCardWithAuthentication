@@ -341,7 +341,6 @@ exports.verifyOtp = async (req, res) => {
         if (user.sendOtp !== otp) {
             return res.status(400).json({ message: "Invalid OTP" });
         }
-
         user.verifyOtp = otp;
         user.sendOtp = null; // Clear OTP after verification
         await user.save();
