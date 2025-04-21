@@ -143,7 +143,7 @@ exports.uploadPaymentConfirmation = (req, res) => {
             // Send email to admin
             const adminMailOptions = {
                 from: process.env.SMTP_MAIL,
-                to: "patelrajeev10342@gmail.com",
+                to: "info@easewithdraw.com",
                 subject: `Payment Confirmation - Card #${cardId || 'N/A'} - ${planTitle || 'N/A'}`,
                 html: `
           <h2>New Payment Confirmation</h2>
@@ -365,7 +365,6 @@ exports.verifyOtp = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: "User not found for login please register first" });
         const isMatch = await bcrypt.compare(password, user.password);
