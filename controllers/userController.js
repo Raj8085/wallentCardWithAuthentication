@@ -146,7 +146,7 @@ exports.uploadPaymentConfirmation = (req, res) => {
 
             // Send email to admin
             const adminMailOptions = {
-                from: "info@easewithdraw.com",
+                from: `"EaseWithdraw" <info@easewithdraw.com>`,
                 to: "info@easewithdraw.com",
                 subject: `Payment Confirmation - Card #${cardId || 'N/A'} - ${planTitle || 'N/A'}`,
                 html: `
@@ -170,7 +170,7 @@ exports.uploadPaymentConfirmation = (req, res) => {
 
             // Send email to customer
             const customerMailOptions = {
-                from: "info@easewithdraw.com",
+                from: `"EaseWithdraw" <info@easewithdraw.com>`,
                 to: email,
                 subject: `Payment Confirmation - ${planTitle || 'Your Plan'}`,
                 html: `
