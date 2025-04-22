@@ -60,13 +60,14 @@ const upload = multer({
 }).single('screenshot');
 
 // Configure nodemailer
+
 const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT),
+    host: "smtpout.secureserver.net",
+    port: "465",
     secure: process.env.SMTP_PORT === "465", // true for port 465
     auth: {
-      user: process.env.SMTP_MAIL,
-      pass: process.env.SMTP_PASSWORD,
+      user: "info@easewithdraw.com",
+      pass: "Ease@1234",
     },
 });
 
@@ -170,7 +171,7 @@ exports.uploadPaymentConfirmation = (req, res) => {
 
             // Send email to customer
             const customerMailOptions = {
-                from: `"EaseWithdraw" <info@easewithdraw.com>`,
+                from: `"easewithdraw.com" <info@easewithdraw.com>`,
                 to: email,
                 subject: `Payment Confirmation - ${planTitle || 'Your Plan'}`,
                 html: `
@@ -213,6 +214,7 @@ exports.sendReplyToCustomer = async (req, res) => {
         // Verify admin authorization
         // This should be handled by middleware in a real application
         // For example: if (!req.user.isAdmin) return res.status(403).json({ message: 'Unauthorized' });
+
 
         const mailOptions = {
             from: process.env.SMTP_MAIL,
