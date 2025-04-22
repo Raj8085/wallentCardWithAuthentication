@@ -61,11 +61,13 @@ const upload = multer({
 
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT),
+    secure: process.env.SMTP_PORT === "465", // true for port 465
     auth: {
-        user: process.env.SMTP_MAIL,
-        pass: process.env.SMTP_PASSWORD
-    }
+      user: process.env.SMTP_MAIL,
+      pass: process.env.SMTP_PASSWORD,
+    },
 });
 
 // Create Payment model or schema if you don't have one
@@ -103,6 +105,8 @@ module.exports = mongoose.model('Payment', PaymentSchema);
 */
 
 // Handle payment confirmation upload
+
+
 exports.uploadPaymentConfirmation = (req, res) => {
     upload(req, res, async function (err) {
         if (err instanceof multer.MulterError) {
