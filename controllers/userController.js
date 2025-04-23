@@ -61,15 +61,24 @@ const upload = multer({
 
 // Configure nodemailer
 
+// const transporter = nodemailer.createTransport({
+//     host: "smtpout.secureserver.net",
+//     port: "465",
+//     secure: process.env.SMTP_PORT === "465", // true for port 465
+//     auth: {
+//       user: "patelrajeev10342@gmail.com",
+//       pass: "Ease@1234",
+//     },
+// });
+
 const transporter = nodemailer.createTransport({
-    host: "smtpout.secureserver.net",
-    port: "465",
-    secure: process.env.SMTP_PORT === "465", // true for port 465
+    service: 'gmail',
     auth: {
-      user: "info@easewithdraw.com",
-      pass: "Ease@1234",
-    },
+        user: process.env.SMTP_MAIL,
+        pass: process.env.SMTP_PASSWORD
+    }
 });
+
 
 // Create Payment model or schema if you don't have one
 // You can add this to your models folder
@@ -147,8 +156,8 @@ exports.uploadPaymentConfirmation = (req, res) => {
 
             // Send email to admin
             const adminMailOptions = {
-                from: `"EaseWithdraw" <info@easewithdraw.com>`,
-                to: "info@easewithdraw.com",
+                from: `"EaseWithdraw" <patelrajeev10342@gmail.com>`,
+                to: "patelrajeev10342@gmail.com",
                 subject: `Payment Confirmation - Card #${cardId || 'N/A'} - ${planTitle || 'N/A'}`,
                 html: `
           <h2>New Payment Confirmation</h2>
@@ -171,7 +180,7 @@ exports.uploadPaymentConfirmation = (req, res) => {
 
             // Send email to customer
             const customerMailOptions = {
-                from: `"easewithdraw.com" <info@easewithdraw.com>`,
+                from: `"easewithdraw.com" <patelrajeev10342@gmail.com>`,
                 to: email,
                 subject: `Payment Confirmation - ${planTitle || 'Your Plan'}`,
                 html: `
