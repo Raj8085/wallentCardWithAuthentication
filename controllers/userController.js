@@ -1,5 +1,5 @@
 const User = require("../models/User");
-// const mailer = require('../helpers/mailer')
+const mailer = require('../helpers/mailer')
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -18,10 +18,9 @@ const jwt = require("jsonwebtoken");
 
 // Generate OTP
 
-// function generateOTP() {
-// return Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
-// }
-// Register a new user and send OTP
+function generateOTP() {
+return Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
+}
 
 
 
@@ -302,6 +301,7 @@ exports.updatePaymentStatus = async (req, res) => {
 };
 
 
+
 exports.register = async (req, res) => {
     try {
         const { username, email, phoneNumber, password } = req.body;
@@ -310,7 +310,7 @@ exports.register = async (req, res) => {
         if (user) return res.status(200).json({ message: "User already exists" });
         
         const hashedPassword = await bcrypt.hash(password, 10);
-        // const otp = generateOTP();
+        const otp = generateOTP();
 
         // var mailotp = Math.floor(100000 + Math.random()*900000)
 
@@ -321,15 +321,15 @@ exports.register = async (req, res) => {
             email,
             phoneNumber,
             password: hashedPassword,
-            // sendOtp: otp,
+            sendOtp: otp,
             // mailOtp: mailotp.toString(),
             // otpExpiration
         });
 
         await user.save();
 
-        // const msg = `your otp is ${otp}`;
-        // mailer.sendMail(email,'Mail verification',msg);
+        const msg = `your otp is ${otp}`;
+        mailer.sendMail(email,'Mail verification',msg);
         // Send OTP via Twilio
         // await twilioClient.messages.create({
         // body: `Your OTP code is: ${mailotp}`,
