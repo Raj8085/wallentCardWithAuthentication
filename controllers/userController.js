@@ -497,9 +497,6 @@ exports.login = async (req, res) => {
 };
 
 
-
-
-
 exports.verifyOtp = async (req, res) => {
     try {
         // Get email and otp from request body
