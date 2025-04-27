@@ -56,6 +56,7 @@ const userSchema = new mongoose.Schema(
     phoneNumber: {
       type: String, // Change to String for consistency
       required: true,
+      unique: true
     },
     verifyOtp: {
       type: String, // Change to String for consistency
@@ -69,5 +70,4 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 module.exports = mongoose.model("User", userSchema);

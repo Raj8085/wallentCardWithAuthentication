@@ -302,118 +302,20 @@ exports.updatePaymentStatus = async (req, res) => {
 
 
 
-exports.register = async (req, res) => {
-    try {
-        const { username, email, phoneNumber, password } = req.body;
-
-        let user = await User.findOne({ email });
-        if (user) return res.status(400).json({ message: "User already exists" });
-        
-        const hashedPassword = await bcrypt.hash(password, 10);
-        
-        // Generate a 6-digit OTP as a string
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        
-        // Generate email OTP
-        const mailOtp = Math.floor(100000 + Math.random() * 900000).toString();
-
-        user = new User({
-            username,
-            email,
-            phoneNumber,
-            password: hashedPassword,
-            sendOtp: otp,
-            mailOtp: mailOtp,
-        });
-
-        await user.save();
-
-        const msg = `Your OTP is ${otp}`;
-        mailer.sendMail(email, 'Mail verification', msg);
-
-        const token = jwt.sign({ userId: user._id }, "a6c3157c166681b32be2f0d6b97c734471f6a1bb69f322e7e71d36bb363863fe", { expiresIn: "1h" });
-
-        res.status(201).json({
-            message: "User registered successfully",
-            token,
-            user: {
-              username: user.username,
-              email: user.email,
-              phoneNumber: user.phoneNumber,
-            },
-          });
-    } catch (error) {
-        console.error("Registration error:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-};
-
-exports.verifyOtp = async (req, res) => {
-    try {
-        const { phoneNumber, otp } = req.body;
-
-        // Debug logs to help troubleshoot
-        console.log("Verification request received:", { phoneNumber, otp });
-        
-        const user = await User.findOne({ phoneNumber });
-        if (!user) {
-            console.log("User not found for phone number:", phoneNumber);
-            return res.status(400).json({ message: "User not found" });
-        }
-        
-        console.log("User found:", user.username);
-        console.log("Stored OTP:", user.sendOtp, "Type:", typeof user.sendOtp);
-        console.log("Received OTP:", otp, "Type:", typeof otp);
-        
-        // Normalize both OTPs by trimming whitespace and ensuring they're strings
-        const storedOtp = String(user.sendOtp).trim();
-        const receivedOtp = String(otp).trim();
-        
-        console.log("Comparing:", storedOtp, "===", receivedOtp);
-        
-        if (storedOtp !== receivedOtp) {
-            console.log("OTP mismatch");
-            return res.status(400).json({ message: "Invalid OTP" });
-        }
-          
-        // OTP verified successfully
-        user.verifyOtp = otp;
-        user.sendOtp = null; // Clear OTP after verification
-        await user.save();
-        
-        console.log("OTP verified successfully for user:", user.username);
-        res.json({ message: "OTP verified successfully!" });
-    } catch (error) {
-        console.error("Verify OTP error:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
 // exports.register = async (req, res) => {
 //     try {
 //         const { username, email, phoneNumber, password } = req.body;
 
 //         let user = await User.findOne({ email });
-//         if (user) return res.status(200).json({ message: "User already exists" });
+//         if (user) return res.status(400).json({ message: "User already exists" });
         
 //         const hashedPassword = await bcrypt.hash(password, 10);
-//         const otp = generateOTP();
-
-//         var mailotp = Math.floor(100000 + Math.random()*900000)
-
-//         // const otpExpiration = generateExpiryTime();
+        
+//         // Generate a 6-digit OTP as a string
+//         const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        
+//         // Generate email OTP
+//         const mailOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
 //         user = new User({
 //             username,
@@ -421,20 +323,13 @@ exports.verifyOtp = async (req, res) => {
 //             phoneNumber,
 //             password: hashedPassword,
 //             sendOtp: otp,
-//             mailOtp: mailotp.toString(),
-//             // otpExpiration
+//             mailOtp: mailOtp,
 //         });
 
 //         await user.save();
 
-//         const msg = `your otp is ${otp}`;
-//         mailer.sendMail(email,'Mail verification',msg);
-//         // Send OTP via Twilio
-//         // await twilioClient.messages.create({
-//         // body: `Your OTP code is: ${mailotp}`,
-//         // to: phoneNumber,
-//         // from: process.env.TWILIO_PHONE_NUMBER,
-//         // });
+//         const msg = `Your OTP is ${otp}`;
+//         mailer.sendMail(email, 'Mail verification', msg);
 
 //         const token = jwt.sign({ userId: user._id }, "a6c3157c166681b32be2f0d6b97c734471f6a1bb69f322e7e71d36bb363863fe", { expiresIn: "1h" });
 
@@ -444,14 +339,117 @@ exports.verifyOtp = async (req, res) => {
 //             user: {
 //               username: user.username,
 //               email: user.email,
+//               phoneNumber: user.phoneNumber,
 //             },
 //           });
-//         // res.status(201).json({ message: "User registered successfully. OTP sent!" });
 //     } catch (error) {
 //         console.error("Registration error:", error);
 //         res.status(500).json({ message: "Internal Server Error" });
 //     }
 // };
+
+
+
+// exports.verifyOtp = async (req, res) => {
+//     try {
+//         const { phoneNumber, otp } = req.body;
+
+//         // Debug logs to help troubleshoot
+//         console.log("Verification request received:", { phoneNumber, otp });
+        
+//         const user = await User.findOne({ phoneNumber });
+//         if (!user) {
+//             console.log("User not found for phone number:", phoneNumber);
+//             return res.status(400).json({ message: "User not found" });
+//         }
+        
+//         console.log("User found:", user.username);
+//         console.log("Stored OTP:", user.sendOtp, "Type:", typeof user.sendOtp);
+//         console.log("Received OTP:", otp, "Type:", typeof otp);
+        
+//         // Normalize both OTPs by trimming whitespace and ensuring they're strings
+//         const storedOtp = String(user.sendOtp).trim();
+//         const receivedOtp = String(otp).trim();
+        
+//         console.log("Comparing:", storedOtp, "===", receivedOtp);
+        
+//         if (storedOtp !== receivedOtp) {
+//             console.log("OTP mismatch");
+//             return res.status(400).json({ message: "Invalid OTP" });
+//         }
+          
+//         // OTP verified successfully
+//         user.verifyOtp = otp;
+//         user.sendOtp = null; // Clear OTP after verification
+//         await user.save();
+        
+//         console.log("OTP verified successfully for user:", user.username);
+//         res.json({ message: "OTP verified successfully!" });
+//     } catch (error) {
+//         console.error("Verify OTP error:", error);
+//         res.status(500).json({ message: "Internal Server Error" });
+//     }
+// };
+
+
+
+
+
+
+
+
+
+exports.register = async (req, res) => {
+    try {
+        const { username, email, phoneNumber, password } = req.body;
+
+        let user = await User.findOne({ email });
+        if (user) return res.status(200).json({ message: "User already exists" });
+        
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const otp = generateOTP();
+
+        var mailotp = Math.floor(100000 + Math.random()*900000)
+
+        // const otpExpiration = generateExpiryTime();
+
+        user = new User({
+            username,
+            email,
+            phoneNumber,
+            password: hashedPassword,
+            sendOtp: otp,
+            mailOtp: mailotp.toString(),
+            // otpExpiration
+        });
+
+        await user.save();
+
+        const msg = `your otp is ${otp}`;
+        mailer.sendMail(email,'Mail verification',msg);
+        // Send OTP via Twilio
+        // await twilioClient.messages.create({
+        // body: `Your OTP code is: ${mailotp}`,
+        // to: phoneNumber,
+        // from: process.env.TWILIO_PHONE_NUMBER,
+        // });
+
+        const token = jwt.sign({ userId: user._id }, "a6c3157c166681b32be2f0d6b97c734471f6a1bb69f322e7e71d36bb363863fe", { expiresIn: "1h" });
+
+        res.status(201).json({
+            message: "User registered successfully",
+            token,
+            user: {
+              username: user.username,
+              email: user.email,
+            },
+          });
+        // res.status(201).json({ message: "User registered successfully. OTP sent!" });
+    } catch (error) {
+        console.error("Registration error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
 
 
 // exports.verifyOtp = async (req, res) => {
@@ -480,7 +478,7 @@ exports.verifyOtp = async (req, res) => {
 // };
 
 
-// User Login
+
 
 
 exports.login = async (req, res) => {
@@ -495,5 +493,41 @@ exports.login = async (req, res) => {
     } catch (error) {
         console.error("Login error:", error);
         res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+
+
+
+
+exports.verifyOtp = async (req, res) => {
+    try {
+        // Get email and otp from request body
+        const { email, otp } = req.body;
+
+        // Find user by email instead of phone number
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ message: "User not found" });
+        
+        console.log("Stored OTP:", user.sendOtp);
+        console.log("Received OTP:", otp);
+        
+        // Compare OTPs as strings
+        if (String(user.sendOtp) !== String(otp)) {
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+
+        // Mark user as verified and clear the OTP
+        user.verifyOtp = "verified";
+        user.sendOtp = null; // Clear OTP after verification
+        await user.save();
+        
+        res.status(200).json({ 
+            message: "OTP verified successfully!",
+            verified: true
+        });
+    } catch (error) {
+        console.error("Verify OTP error:", error);
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
