@@ -27,6 +27,11 @@ mongoose
 
 app.use("/auth",authRoute);   
 
+app.use('/health', (req, res) => {
+  res.status(200).json({ status: "UP" });
+}
+);
+
 
 app.options('*', (req, res) => {
   res.header('Access-Control-Allow-Origin', '*');
