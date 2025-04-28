@@ -447,7 +447,7 @@ exports.register = async (req, res) => {
         // res.status(201).json({ message: "User registered successfully. OTP sent!" });
     } catch (error) {
         console.error("Registration error:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
 
