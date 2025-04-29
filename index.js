@@ -9,7 +9,7 @@ const authRoute = require("./routes/authRoutes");
 const app = express();
 
 app.use(cors({
-  origin: 'https://easewithdraw.com', 
+  origin: ['https://easewithdraw.com', 'http:localhost:5173', 'http:localhost:5174'], // Allowed origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
   credentials: true, // Allow cookies/auth headers
