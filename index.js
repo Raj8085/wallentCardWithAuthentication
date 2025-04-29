@@ -1,12 +1,16 @@
 require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");
+const path = require('path');
 const cors = require("cors");
 const PORT = process.env.PORT || 3000;
+
 
 const authRoute = require("./routes/authRoutes");
 
 const app = express();
+
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
   origin: '*',

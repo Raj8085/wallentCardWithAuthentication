@@ -2,6 +2,7 @@ const User = require("../models/User");
 const mailer = require('../helpers/mailer')
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { sendVerificationEmail } = require('../helpers/sendVerificationEmail');
 
 // const twilio = require('twilio'); 
 
@@ -219,6 +220,7 @@ exports.sendReplyToCustomer = async (req, res) => {
             return res.status(400).json({ message: 'Customer email and message are required' });
         }
 
+        
         // Verify admin authorization
         // This should be handled by middleware in a real application
         // For example: if (!req.user.isAdmin) return res.status(403).json({ message: 'Unauthorized' });
@@ -425,8 +427,15 @@ exports.register = async (req, res) => {
 
         await user.save();
 
-        const msg = `your otp is ${otp}`;
-        mailer.sendMail(email,'Mail verification',msg);
+
+        await sendVerificationEmail(
+            email,
+            'Verify Your Email Address',
+            otp
+        );
+
+        // const msg = `your otp is ${otp}`;
+        // mailer.sendMail(email,'Verification code received',msg);
         // Send OTP via Twilio
         // await twilioClient.messages.create({
         // body: `Your OTP code is: ${mailotp}`,
@@ -479,6 +488,59 @@ exports.register = async (req, res) => {
 
 
 
+
+
+
+// exports.register = async (req, res) => {
+//     try {
+//         const { username, email, phoneNumber, password } = req.body;
+
+//         let user = await User.findOne({ email });
+//         if (user) return res.status(200).json({ message: "User already exists" });
+        
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const otp = generateOTP();
+
+//         var mailotp = Math.floor(100000 + Math.random()*900000);
+//         const mailOtpString = mailotp.toString();
+
+//         user = new User({
+//             username,
+//             email,
+//             phoneNumber,
+//             password: hashedPassword,
+//             sendOtp: otp,
+//             mailOtp: mailOtpString,
+//         });
+
+//         await user.save();
+
+//         // Send HTML email with logo and styled verification code
+//         await sendVerificationEmail(
+//             email,
+//             'Verify Your Email Address',
+//             mailOtpString
+//         );
+
+//         const token = jwt.sign(
+//             { userId: user._id }, 
+//             "a6c3157c166681b32be2f0d6b97c734471f6a1bb69f322e7e71d36bb363863fe", 
+//             { expiresIn: "1h" }
+//         );
+
+//         res.status(201).json({
+//             message: "User registered successfully",
+//             token,
+//             user: {
+//               username: user.username,
+//               email: user.email,
+//             },
+//         });
+//     } catch (error) {
+//         console.error("Registration error:", error);
+//         res.status(500).json({ message: "Internal Server Error" });
+//     }
+// };
 
 
 exports.login = async (req, res) => {
