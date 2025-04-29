@@ -13,7 +13,7 @@ const app = express();
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  origin: '*',
+  origin: '*', // Allowed origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
   credentials: true, // Allow cookies/auth headers
