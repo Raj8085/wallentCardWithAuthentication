@@ -3,6 +3,7 @@ const {
   getCards,
   createCard,
   processPayment,
+  seedCards,
   toggleCardStatus,
   toggleCardFreeze,
   updateSpendingLimit,
@@ -14,7 +15,7 @@ const router = express.Router()
 // Card management routes
 router.get("/", getCards)
 router.post("/create", createCard)
-
+router.post("/seed", seedCards)
 // Payment processing
 router.post("/process-payment", processPayment)
 
