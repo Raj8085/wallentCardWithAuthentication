@@ -4,6 +4,7 @@ const WalletUser = require('../models/WalletUser')
 // Generate a random nonce
 const generateNonce = () => Math.floor(Math.random() * 1000000).toString()
 
+
 exports.getNonce = async (req, res) => {
   const { address } = req.query
   if (!address) return res.status(400).json({ error: 'Wallet address is required' })
