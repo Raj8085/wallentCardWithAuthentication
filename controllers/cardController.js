@@ -1461,6 +1461,7 @@ exports.seedCards = async (req, res) => {
       {
         walletAddress: walletAddress.toLowerCase(),
         name: "Coinbase Pro",
+        slug: "coinbase",
         type: "Crypto Exchange",
         balance: 2450.75,
         isActive: true,
@@ -1493,6 +1494,7 @@ exports.seedCards = async (req, res) => {
       {
         walletAddress: walletAddress.toLowerCase(),
         name: "CashApp Elite",
+        slug: "cash-app",
         type: "Digital Wallet",
         balance: 1250.3,
         isActive: true,
@@ -1524,6 +1526,7 @@ exports.seedCards = async (req, res) => {
       {
         walletAddress: walletAddress.toLowerCase(),
         name: "PayPal Business",
+        slug: "paypal",
         type: "Payment Service",
         balance: 890.45,
         isActive: false,
@@ -1554,6 +1557,7 @@ exports.seedCards = async (req, res) => {
       {
         walletAddress: walletAddress.toLowerCase(),
         name: "Nexo Platinum",
+        slug: "nexon",
         type: "Crypto Platform",
         balance: 3200.8,
         isActive: true,
@@ -1592,6 +1596,7 @@ exports.seedCards = async (req, res) => {
       {
         walletAddress: walletAddress.toLowerCase(),
         name: "TrustWallet Pro",
+        slug: "trustwallet",
         type: "Mobile Wallet",
         balance: 1680.25,
         isActive: true,
@@ -1623,6 +1628,7 @@ exports.seedCards = async (req, res) => {
       {
         walletAddress: walletAddress.toLowerCase(),
         name: "Robinhood Gold",
+        slug: "robinhood",
         type: "Investment App",
         balance: 5420.15,
         isActive: true,
