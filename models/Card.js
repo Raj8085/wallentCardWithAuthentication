@@ -10,7 +10,7 @@ const transactionSchema = new mongoose.Schema({
   status: { type: String, enum: ["pending", "completed", "failed"], default: "completed" },
   transactionHash: { type: String },
   signature: { type: String },
-  nonce: { type: String },
+  nonce: { type: String},
 })
 
 const cardSchema = new mongoose.Schema({
