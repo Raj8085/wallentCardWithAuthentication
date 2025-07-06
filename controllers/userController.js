@@ -397,36 +397,28 @@ exports.updatePaymentStatus = async (req, res) => {
 
 
 
-
-
-
-
 exports.register = async (req, res) => {
     try {
-        const { username, email, phoneNumber, password } = req.body;
+        const { firstName, lastName, email, phoneNumber, password } = req.body;
 
         let user = await User.findOne({ email });
         if (user) return res.status(200).json({ message: "User already exists" });
         
         const hashedPassword = await bcrypt.hash(password, 10);
         const otp = generateOTP();
-
-        var mailotp = Math.floor(100000 + Math.random()*900000)
-
-        // const otpExpiration = generateExpiryTime();
+        const mailotp = Math.floor(100000 + Math.random() * 900000);
 
         user = new User({
-            username,
+            firstName,
+            lastName,
             email,
             phoneNumber,
             password: hashedPassword,
             sendOtp: otp,
             mailOtp: mailotp.toString(),
-            // otpExpiration
         });
 
         await user.save();
-
 
         await sendVerificationEmail(
             email,
@@ -434,31 +426,94 @@ exports.register = async (req, res) => {
             otp
         );
 
-        // const msg = `your otp is ${otp}`;
-        // mailer.sendMail(email,'Verification code received',msg);
-        // Send OTP via Twilio
-        // await twilioClient.messages.create({
-        // body: `Your OTP code is: ${mailotp}`,
-        // to: phoneNumber,
-        // from: process.env.TWILIO_PHONE_NUMBER,
-        // });
-
-        const token = jwt.sign({ userId: user._id }, "a6c3157c166681b32be2f0d6b97c734471f6a1bb69f322e7e71d36bb363863fe", { expiresIn: "1h" });
+        const token = jwt.sign(
+            { userId: user._id },
+            "a6c3157c166681b32be2f0d6b97c734471f6a1bb69f322e7e71d36bb363863fe",
+            { expiresIn: "1h" }
+        );
 
         res.status(201).json({
             message: "User registered successfully",
             token,
             user: {
-              username: user.username,
-              email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
             },
-          });
-        // res.status(201).json({ message: "User registered successfully. OTP sent!" });
+        });
+
     } catch (error) {
         console.error("Registration error:", error);
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
+
+
+
+
+
+
+
+
+
+// exports.register = async (req, res) => {
+//     try {
+//         const { username, email, phoneNumber, password } = req.body;
+
+//         let user = await User.findOne({ email });
+//         if (user) return res.status(200).json({ message: "User already exists" });
+        
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const otp = generateOTP();
+
+//         var mailotp = Math.floor(100000 + Math.random()*900000)
+
+//         // const otpExpiration = generateExpiryTime();
+
+//         user = new User({
+//             username,
+//             email,
+//             phoneNumber,
+//             password: hashedPassword,
+//             sendOtp: otp,
+//             mailOtp: mailotp.toString(),
+//             // otpExpiration
+//         });
+
+//         await user.save();
+
+
+//         await sendVerificationEmail(
+//             email,
+//             'Verify Your Email Address',
+//             otp
+//         );
+
+//         // const msg = `your otp is ${otp}`;
+//         // mailer.sendMail(email,'Verification code received',msg);
+//         // Send OTP via Twilio
+//         // await twilioClient.messages.create({
+//         // body: `Your OTP code is: ${mailotp}`,
+//         // to: phoneNumber,
+//         // from: process.env.TWILIO_PHONE_NUMBER,
+//         // });
+
+//         const token = jwt.sign({ userId: user._id }, "a6c3157c166681b32be2f0d6b97c734471f6a1bb69f322e7e71d36bb363863fe", { expiresIn: "1h" });
+
+//         res.status(201).json({
+//             message: "User registered successfully",
+//             token,
+//             user: {
+//               username: user.username,
+//               email: user.email,
+//             },
+//           });
+//         // res.status(201).json({ message: "User registered successfully. OTP sent!" });
+//     } catch (error) {
+//         console.error("Registration error:", error);
+//         res.status(500).json({ message: "Internal Server Error", error: error.message });
+//     }
+// };
 
 
 // exports.verifyOtp = async (req, res) => {
