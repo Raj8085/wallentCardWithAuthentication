@@ -117,6 +117,7 @@ module.exports = mongoose.model('Payment', PaymentSchema);
 // Handle payment confirmation upload
 
 
+
 exports.uploadPaymentConfirmation = (req, res) => {
     upload(req, res, async function (err) {
         if (err instanceof multer.MulterError) {
@@ -154,20 +155,155 @@ exports.uploadPaymentConfirmation = (req, res) => {
             // });
             // await payment.save();
 
+            // Enhanced HTML template for admin email
+            const adminEmailTemplate = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Payment Confirmation - Admin</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+                        .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px 10px 0 0; text-align: center; }
+                        .content { padding: 30px; }
+                        .info-card { background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea; }
+                        .label { font-weight: bold; color: #333; margin-bottom: 5px; }
+                        .value { color: #666; margin-bottom: 15px; }
+                        .highlight { background-color: #e8f4f8; padding: 15px; border-radius: 8px; border: 1px solid #b8daff; }
+                        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>🔔 New Payment Confirmation</h1>
+                            <p>EaseWithdraw Payment System</p>
+                        </div>
+                        <div class="content">
+                            <div class="info-card">
+                                <div class="label">Customer Email:</div>
+                                <div class="value">${email}</div>
+                                
+                                <div class="label">Card ID:</div>
+                                <div class="value">${cardId || 'N/A'}</div>
+                                
+                                <div class="label">Plan Selected:</div>
+                                <div class="value">${planTitle || 'N/A'}</div>
+                                
+                                <div class="label">Amount:</div>
+                                <div class="value">₹${planPrice || 'N/A'}</div>
+                            </div>
+                            
+                            ${message ? `
+                                <div class="highlight">
+                                    <strong>Customer Message:</strong><br>
+                                    ${message}
+                                </div>
+                            ` : ''}
+                            
+                            <p><strong>📎 Payment Screenshot:</strong> Please find the payment screenshot attached to this email.</p>
+                            <p><strong>⚡ Action Required:</strong> Please review the payment and activate the customer's subscription.</p>
+                        </div>
+                        <div class="footer">
+                            <p>EaseWithdraw Admin Panel</p>
+                            <p>Reply to customer: <a href="mailto:${email}">${email}</a></p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            // Enhanced HTML template for customer email
+            const customerEmailTemplate = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Payment Confirmation - EaseWithdraw</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+                        .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px 10px 0 0; text-align: center; }
+                        .content { padding: 30px; }
+                        .success-badge { background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0; border: 1px solid #c3e6cb; }
+                        .plan-details { background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                        .plan-item { display: flex; justify-content: space-between; margin: 10px 0; padding: 10px 0; border-bottom: 1px solid #eee; }
+                        .plan-item:last-child { border-bottom: none; }
+                        .cta-button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; display: inline-block; margin: 20px 0; font-weight: bold; }
+                        .features { background-color: #e8f4f8; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                        .feature-item { margin: 10px 0; padding-left: 20px; position: relative; }
+                        .feature-item:before { content: "✓"; position: absolute; left: 0; color: #28a745; font-weight: bold; }
+                        .footer { background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; color: #666; }
+                        .support-info { background-color: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #ffeaa7; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>🎉 Welcome to EaseWithdraw</h1>
+                            <p>Your Crypto Income Journey Starts Here</p>
+                        </div>
+                        <div class="content">
+                            <div class="success-badge">
+                                <strong>✅ Payment Confirmation Received!</strong><br>
+                                Thank you for choosing EaseWithdraw
+                            </div>
+                            
+                            <p>Hi there,</p>
+                            <p>We've received your payment confirmation and are excited to welcome you to the EaseWithdraw family!</p>
+                            
+                            <div class="plan-details">
+                                <h3>📋 Your Plan Details:</h3>
+                                <div class="plan-item">
+                                    <span><strong>Plan:</strong></span>
+                                    <span>${planTitle || 'N/A'}</span>
+                                </div>
+                                <div class="plan-item">
+                                    <span><strong>Amount:</strong></span>
+                                    <span>₹${planPrice || 'N/A'}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="features">
+                                <h3>🚀 What's Next?</h3>
+                                <div class="feature-item">Get your own Crypto Card</div>
+                                <div class="feature-item">Start building side income or passive revenue</div>
+                                <div class="feature-item">Get real support for your financial journey</div>
+                                <div class="feature-item">24/7 customer support</div>
+                            </div>
+                            
+                            <p>Already using CashApp, Binance, Coinbase, TrustWallet, PayPal, or Robinhood? Now's the time to turn them into income-generating tools with EaseWithdraw.</p>
+                            
+                            <div style="text-align: center;">
+                                <a href="#" class="cta-button">Access Your Dashboard</a>
+                            </div>
+                            
+                            <div class="support-info">
+                                <strong>⏱️ Processing Time:</strong> Our team will review your payment and activate your subscription within 24 hours. You'll receive another email once everything is set up!
+                            </div>
+                            
+                            <p>We believe everyone can earn smarter, not harder. Welcome to your new financial journey!</p>
+                        </div>
+                        <div class="footer">
+                            <p><strong>Need help or guidance?</strong></p>
+                            <p>We're here 24/7 to support you every step of the way.</p>
+                            <p>📧 <a href="mailto:support@easewithdraw.com">support@easewithdraw.com</a></p>
+                            <p>To new beginnings,<br><strong>Team EaseWithdraw</strong></p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+
             // Send email to admin
             const adminMailOptions = {
                 from: "info@easewithdraw.com",
                 to: "info@easewithdraw.com",
-                subject: `Payment Confirmation - Card #${cardId || 'N/A'} - ${planTitle || 'N/A'}`,
-                html: `
-          <h2>New Payment Confirmation</h2>
-          <p><strong>From:</strong> ${email}</p>
-          <p><strong>Card ID:</strong> ${cardId || 'N/A'}</p>
-          <p><strong>Plan:</strong> ${planTitle || 'N/A'}</p>
-          <p><strong>Amount:</strong> ₹${planPrice ? (planPrice)  : 'N/A'}</p>
-          <p><strong>Message:</strong> ${message || 'No message provided'}</p>
-          <p>Please find the payment screenshot attached.</p>
-        `,
+                subject: `🔔 Payment Confirmation - Card #${cardId || 'N/A'} - ${planTitle || 'N/A'}`,
+                html: adminEmailTemplate,
                 attachments: [
                     {
                         filename: path.basename(req.file.path),
@@ -182,17 +318,8 @@ exports.uploadPaymentConfirmation = (req, res) => {
             const customerMailOptions = {
                 from: "info@easewithdraw.com",
                 to: email,
-                subject: `Payment Confirmation - ${planTitle || 'Your Plan'}`,
-                html: `
-          <h2>Thank You for Your Payment</h2>
-          <p>We have received your payment confirmation for the following:</p>
-          <ul>
-            <li><strong>Plan:</strong> ${planTitle || 'N/A'}</li>
-            <li><strong>Amount:</strong> ₹${planPrice ? (planPrice)  : 'N/A'}</li>
-          </ul>
-          <p>Our team will review your payment and activate your subscription shortly.</p>
-          <p>If you have any questions, please reply to this email.</p>
-        `,
+                subject: `🎉 Welcome to EaseWithdraw – ${planTitle || 'Your Plan'} Confirmed!`,
+                html: customerEmailTemplate,
             };
 
             // Send both emails
@@ -209,6 +336,100 @@ exports.uploadPaymentConfirmation = (req, res) => {
         }
     });
 };
+
+
+// exports.uploadPaymentConfirmation = (req, res) => {
+//     upload(req, res, async function (err) {
+//         if (err instanceof multer.MulterError) {
+//             return res.status(400).json({ message: `Upload error: ${err.message}` });
+//         } else if (err) {
+//             return res.status(400).json({ message: err.message });
+//         }
+
+//         try {
+//             // Check if file was uploaded
+//             if (!req.file) {
+//                 return res.status(400).json({ message: 'Please upload a payment screenshot' });
+//             }
+
+//             const { email, message, cardId, planTitle, planPrice } = req.body;
+
+//             // Validate required fields
+//             if (!email) {
+//                 return res.status(400).json({ message: 'Email is required' });
+//             }
+
+//             // Find user by email
+//             const user = await User.findOne({ email });
+
+//             // Create payment record
+//             // If you have a Payment model, use it here
+//             // const payment = new Payment({
+//             //   user: user ? user._id : null,
+//             //   email,
+//             //   cardId,
+//             //   planTitle,
+//             //   planPrice,
+//             //   message,
+//             //   screenshotPath: req.file.path,
+//             // });
+//             // await payment.save();
+
+//             // Send email to admin
+//             const adminMailOptions = {
+//                 from: "info@easewithdraw.com",
+//                 to: "info@easewithdraw.com",
+//                 subject: `Payment Confirmation - Card #${cardId || 'N/A'} - ${planTitle || 'N/A'}`,
+//                 html: `
+//           <h2>New Payment Confirmation</h2>
+//           <p><strong>From:</strong> ${email}</p>
+//           <p><strong>Card ID:</strong> ${cardId || 'N/A'}</p>
+//           <p><strong>Plan:</strong> ${planTitle || 'N/A'}</p>
+//           <p><strong>Amount:</strong> ₹${planPrice ? (planPrice)  : 'N/A'}</p>
+//           <p><strong>Message:</strong> ${message || 'No message provided'}</p>
+//           <p>Please find the payment screenshot attached.</p>
+//         `,
+//                 attachments: [
+//                     {
+//                         filename: path.basename(req.file.path),
+//                         path: req.file.path,
+//                         contentType: req.file.mimetype,
+//                     },
+//                 ],
+//                 replyTo: email,
+//             };
+
+//             // Send email to customer
+//             const customerMailOptions = {
+//                 from: "info@easewithdraw.com",
+//                 to: email,
+//                 subject: `Payment Confirmation - ${planTitle || 'Your Plan'}`,
+//                 html: `
+//           <h2>Thank You for Your Payment</h2>
+//           <p>We have received your payment confirmation for the following:</p>
+//           <ul>
+//             <li><strong>Plan:</strong> ${planTitle || 'N/A'}</li>
+//             <li><strong>Amount:</strong> ₹${planPrice ? (planPrice)  : 'N/A'}</li>
+//           </ul>
+//           <p>Our team will review your payment and activate your subscription shortly.</p>
+//           <p>If you have any questions, please reply to this email.</p>
+//         `,
+//             };
+
+//             // Send both emails
+//             await transporter.sendMail(adminMailOptions);
+//             await transporter.sendMail(customerMailOptions);
+
+//             res.status(200).json({
+//                 message: 'Payment confirmation uploaded and emails sent successfully',
+//                 file: req.file.filename
+//             });
+//         } catch (error) {
+//             console.error('Payment confirmation error:', error);
+//             res.status(500).json({ message: 'Internal Server Error' });
+//         }
+//     });
+// };
 
 // Admin reply to customer
 exports.sendReplyToCustomer = async (req, res) => {
