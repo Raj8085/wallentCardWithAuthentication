@@ -132,7 +132,7 @@ exports.uploadPaymentConfirmation = (req, res) => {
                 return res.status(400).json({ message: 'Please upload a payment screenshot' });
             }
 
-            const { email, message, cardId, planTitle, planPrice } = req.body;
+            const { email, message, cardId, planTitle, planPrice,cardName } = req.body;
 
             // Validate required fields
             if (!email) {
@@ -191,7 +191,10 @@ exports.uploadPaymentConfirmation = (req, res) => {
                                 
                                 <div class="label">Plan Selected:</div>
                                 <div class="value">${planTitle || 'N/A'}</div>
-                                
+
+                                 <div class="label">Card Name:</div>
+                                <div class="value">${cardName || 'N/A'}</div>
+                               
                                 <div class="label">Amount:</div>
                                 <div class="value">₹${planPrice || 'N/A'}</div>
                             </div>
@@ -257,6 +260,10 @@ exports.uploadPaymentConfirmation = (req, res) => {
                             
                             <div class="plan-details">
                                 <h3>📋 Your Plan Details:</h3>
+                                 <div class="plan-item">
+                                    <span><strong>Card Name:</strong></span>
+                                    <span>${cardName || 'N/A'}</span>
+                                </div>
                                 <div class="plan-item">
                                     <span><strong>Plan:</strong></span>
                                     <span>${planTitle || 'N/A'}</span>
@@ -318,7 +325,8 @@ exports.uploadPaymentConfirmation = (req, res) => {
             const customerMailOptions = {
                 from: "info@easewithdraw.com",
                 to: email,
-                subject: `🎉 Welcome to EaseWithdraw – ${planTitle || 'Your Plan'} Confirmed!`,
+                    subject: `🎉 Welcome to EaseWithdraw – (${cardName || 'Card'}) ${planTitle || 'Your Plan'} Confirmed!`,
+                // subject: `🎉 Welcome to EaseWithdraw – ${planTitle || 'Your Plan'} Confirmed!`,
                 html: customerEmailTemplate,
             };
 
